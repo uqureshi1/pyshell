@@ -1,10 +1,10 @@
 import os
-import sys
-import subprocess
 import readline
+import subprocess
+import sys
 
+from .constants import HANDLED_COMMANDS, StdoutTarget, StdStreams
 from .utils import get_output_mode, output_to_target, strip_redirection
-from .constants import StdStreams, StdoutTarget, HANDLED_COMMANDS
 
 REGISTERED_COMPLETES = {}
 BACKGROUND_JOBS = []
@@ -23,31 +23,23 @@ def change_directory(arguments):
     if os.path.isdir(new_dir):
         os.chdir(new_dir)
     else:
-        output_to_target(
-            f"cd: {new_dir}: No such file or directory", *get_output_mode(arguments)
-        )
+        output_to_target(f"cd: {new_dir}: No such file or directory", *get_output_mode(arguments))
 
 
 def type_command(arguments):
     command_to_check = arguments[0]
     if command_to_check in HANDLED_COMMANDS:
-        output_to_target(
-            f"{command_to_check} is a shell builtin", *get_output_mode(arguments)
-        )
+        output_to_target(f"{command_to_check} is a shell builtin", *get_output_mode(arguments))
     else:
         found = False
         for path in os.environ["PATH"].split(os.pathsep):
             full_path = os.path.join(path, command_to_check)
             if os.path.isfile(full_path) and os.access(full_path, os.X_OK):
-                output_to_target(
-                    f"{command_to_check} is {full_path}", *get_output_mode(arguments)
-                )
+                output_to_target(f"{command_to_check} is {full_path}", *get_output_mode(arguments))
                 found = True
                 break
         if not found:
-            output_to_target(
-                f"{command_to_check} not found", *get_output_mode(arguments)
-            )
+            output_to_target(f"{command_to_check} not found", *get_output_mode(arguments))
 
 
 def echo_command(arguments):
@@ -68,11 +60,7 @@ def handle_external_command(command, arguments):
             if os.path.isfile(full_path) and os.access(full_path, os.X_OK):
                 args = {}
                 target, output_file, stream, file_mode = get_output_mode(arguments)
-                mode = (
-                    open(output_file, file_mode)
-                    if target == StdoutTarget.FILE
-                    else None
-                )
+                mode = open(output_file, file_mode) if target == StdoutTarget.FILE else None
                 if stream == StdStreams.STDOUT:
                     args["stdout"] = mode or subprocess.PIPE
                 else:
@@ -151,9 +139,7 @@ def handle_pipeline_command(segments):
 
         full_path = _resolve_executable(command)
         if full_path is None:
-            output_to_target(
-                f"{command}: command not found", *get_output_mode(arguments)
-            )
+            output_to_target(f"{command}: command not found", *get_output_mode(arguments))
             if stdin_fd is not None:
                 os.close(stdin_fd)
             if stdout_fd is not None:
@@ -196,9 +182,7 @@ def handle_complete_command(arguments):
     if len(arguments) == 2 and arguments[0] == "-p":
         if command in REGISTERED_COMPLETES:
             completion = REGISTERED_COMPLETES[command]
-            output_to_target(
-                f"complete -C '{completion}' {command}", *get_output_mode(arguments)
-            )
+            output_to_target(f"complete -C '{completion}' {command}", *get_output_mode(arguments))
         else:
             output_to_target(
                 f"complete: {arguments[1]}: no completion specification",
@@ -224,9 +208,8 @@ def handle_jobs_command(completed_only=False):
         if status == "Running" and completed_only:
             continue
 
-        output_to_target(
-            f"[{job['id']}]{marker}  {status:<24}{job['command']}{" &" if status == "Running" else ""}"
-        )
+        suffix = " &" if status == "Running" else ""
+        output_to_target(f"[{job['id']}]{marker}  {status:<24}{job['command']}{suffix}")
         if status == "Done":
             indexes_to_remove.append(index)
 
@@ -273,14 +256,10 @@ def handle_history_command(arguments):
 def handle_declare_command(arguments):
     if len(arguments) == 2 and arguments[0] == "-p":
         if arguments[1] not in DECLARED_VARIABLES:
-            output_to_target(
-                f"declare: {arguments[1]}: not found", *get_output_mode(arguments)
-            )
+            output_to_target(f"declare: {arguments[1]}: not found", *get_output_mode(arguments))
         else:
             output_to_target(
-                f"declare -- {arguments[1]}"
-                + "="
-                + f'"{DECLARED_VARIABLES[arguments[1]]}"',
+                f"declare -- {arguments[1]}" + "=" + f'"{DECLARED_VARIABLES[arguments[1]]}"',
                 *get_output_mode(arguments),
             )
 

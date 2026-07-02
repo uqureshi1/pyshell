@@ -3,11 +3,11 @@ try:
 except ImportError:
     import pyreadline3 as readline  # Windows fallback
 
-from .tokenizer import tokenize, split_pipeline
-from .dispatcher import command_dispatcher
-from .commands import handle_jobs_command, handle_pipeline_command
-from .history import configure_history
 from .autocomplete import configure_autocomplete
+from .commands import handle_jobs_command, handle_pipeline_command
+from .dispatcher import command_dispatcher
+from .history import configure_history
+from .tokenizer import split_pipeline, tokenize
 
 
 def main():

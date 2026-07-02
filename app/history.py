@@ -1,7 +1,7 @@
 import atexit
 import os
-from pathlib import Path
 import readline
+from pathlib import Path
 
 
 def configure_history():

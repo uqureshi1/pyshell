@@ -45,9 +45,7 @@ def tokenize(input_string):
                     continue
 
             j = i + 1
-            if j < len(input_string) and (
-                input_string[j].isalpha() or input_string[j] == "_"
-            ):
+            if j < len(input_string) and (input_string[j].isalpha() or input_string[j] == "_"):
                 k = j
                 while k < len(input_string) and (
                     input_string[k].isalnum() or input_string[k] == "_"
@@ -57,19 +55,18 @@ def tokenize(input_string):
                 i = k
                 continue
 
-        if not in_single_quotes and not in_double_quotes:
-            if char == '\\' and i + 1 < len(input_string):
+        no_quotes_active = not in_single_quotes and not in_double_quotes
+        if no_quotes_active and char == "\\" and i + 1 < len(input_string):
+            current += input_string[i + 1]
+            i += 2
+            continue
+
+        if not in_single_quotes and in_double_quotes and char == "\\" and i + 1 < len(input_string):
+            second_char = input_string[i + 1]
+            if second_char in ['"', "\\", "$", "`", "\n"]:
                 current += input_string[i + 1]
                 i += 2
                 continue
-            
-        if not in_single_quotes and in_double_quotes:
-            if char == '\\' and i + 1 < len(input_string):
-                second_char = input_string[i + 1]
-                if second_char in ['"', '\\', '$', '`', '\n']:
-                    current += input_string[i + 1]
-                    i += 2
-                    continue
 
         current += char
         i += 1
