@@ -2,11 +2,10 @@ import os
 import readline
 import subprocess
 
-from .commands import REGISTERED_COMPLETES
-from .constants import AUTO_COMPLETE_COMMANDS
+from pyshell.registry import registry
 
 
-def configure_autocomplete():
+def configure_autocomplete(ctx):
     readline.set_completer_delims(" \t\n")
 
     def completer(text, state):
@@ -15,13 +14,13 @@ def configure_autocomplete():
 
         matches = []
         if is_first_word:
-            cmds = list(AUTO_COMPLETE_COMMANDS) + list(get_executables())
+            cmds = list(registry.names()) + list(get_executables())
             matches.extend([cmd + " " for cmd in cmds if cmd.startswith(text)])
         else:
             words = line.split()
             command = words[0] if words else ""
-            if command in REGISTERED_COMPLETES:
-                matches.extend(get_registered_completions(text))
+            if command in ctx.completions:
+                matches.extend(get_registered_completions(text, ctx))
             else:
                 directory = get_directory_from_input(text)
 
@@ -94,13 +93,13 @@ def get_directory_from_input(input_string):
     return input_string[: last_slash_idx + 1]
 
 
-def get_registered_completions(text):
+def get_registered_completions(text, ctx):
     words = readline.get_line_buffer().split()
     command = words[0] if words else ""
-    if command not in REGISTERED_COMPLETES:
+    if command not in ctx.completions:
         return []
 
-    script = REGISTERED_COMPLETES[command]
+    script = ctx.completions[command]
     previous_word = (words[-2] if len(words) >= 2 else "") if text else (words[-1] if words else "")
 
     comp_line = readline.get_line_buffer()
