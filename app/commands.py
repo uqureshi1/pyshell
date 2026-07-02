@@ -8,8 +8,8 @@ from .constants import StdStreams, StdoutTarget, HANDLED_COMMANDS
 
 REGISTERED_COMPLETES = {}
 BACKGROUND_JOBS = []
-_HISTORY_APPEND_OFFSET = 0
 DECLARED_VARIABLES = {}
+_HISTORY_APPEND_OFFSET = 0
 
 
 def present_working_directory(arguments):
