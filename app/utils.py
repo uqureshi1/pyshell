@@ -1,6 +1,6 @@
 import sys
 
-from .constants import REDIRECTION_OPERATORS, StdStreams, StdoutTarget
+from .constants import REDIRECTION_OPERATORS, StdoutTarget, StdStreams
 
 
 def _redirection_indices(arguments):

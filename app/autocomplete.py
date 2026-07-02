@@ -2,8 +2,8 @@ import os
 import readline
 import subprocess
 
-from .constants import AUTO_COMPLETE_COMMANDS
 from .commands import REGISTERED_COMPLETES
+from .constants import AUTO_COMPLETE_COMMANDS
 
 
 def configure_autocomplete():
@@ -28,12 +28,8 @@ def configure_autocomplete():
                 files = [directory + name for name in get_files_in_directory(directory)]
                 matches.extend([file + " " for file in files if file.startswith(text)])
 
-                directories = [
-                    directory + name for name in get_directories_in_directory(directory)
-                ]
-                matches.extend(
-                    [dir + "/" for dir in directories if dir.startswith(text)]
-                )
+                directories = [directory + name for name in get_directories_in_directory(directory)]
+                matches.extend([dir + "/" for dir in directories if dir.startswith(text)])
 
         if state < len(matches):
             return matches[state]
@@ -77,9 +73,7 @@ def get_files_in_directory(directory):
         return []
 
     return [
-        name
-        for name in os.listdir(search_dir)
-        if not os.path.isdir(os.path.join(search_dir, name))
+        name for name in os.listdir(search_dir) if not os.path.isdir(os.path.join(search_dir, name))
     ]
 
 
@@ -89,9 +83,7 @@ def get_directories_in_directory(directory):
         return []
 
     return [
-        name
-        for name in os.listdir(search_dir)
-        if os.path.isdir(os.path.join(search_dir, name))
+        name for name in os.listdir(search_dir) if os.path.isdir(os.path.join(search_dir, name))
     ]
 
 
@@ -109,10 +101,7 @@ def get_registered_completions(text):
         return []
 
     script = REGISTERED_COMPLETES[command]
-    if text:
-        previous_word = words[-2] if len(words) >= 2 else ""
-    else:
-        previous_word = words[-1] if words else ""
+    previous_word = (words[-2] if len(words) >= 2 else "") if text else (words[-1] if words else "")
 
     comp_line = readline.get_line_buffer()
     env = {

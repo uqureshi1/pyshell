@@ -1,14 +1,14 @@
 from .commands import (
+    change_directory,
+    echo_command,
     exit_command,
     handle_complete_command,
-    handle_jobs_command,
-    present_working_directory,
-    change_directory,
-    type_command,
-    echo_command,
+    handle_declare_command,
     handle_external_command,
     handle_history_command,
-    handle_declare_command,
+    handle_jobs_command,
+    present_working_directory,
+    type_command,
 )
 
 
