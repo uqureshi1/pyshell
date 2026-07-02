@@ -1,15 +1,12 @@
 import os
 
 
-def _expand_variable(name):
-    from .commands import DECLARED_VARIABLES
+def tokenize(input_string, ctx):
+    def expand_variable(name):
+        if name in ctx.declared_vars:
+            return ctx.declared_vars[name]
+        return os.environ.get(name, "")
 
-    if name in DECLARED_VARIABLES:
-        return DECLARED_VARIABLES[name]
-    return os.environ.get(name, "")
-
-
-def tokenize(input_string):
     tokens = []
     current = ""
     i = 0
@@ -40,7 +37,7 @@ def tokenize(input_string):
             if i + 1 < len(input_string) and input_string[i + 1] == "{":
                 close_idx = input_string.find("}", i + 2)
                 if close_idx != -1:
-                    current += _expand_variable(input_string[i + 2 : close_idx])
+                    current += expand_variable(input_string[i + 2 : close_idx])
                     i = close_idx + 1
                     continue
 
@@ -51,7 +48,7 @@ def tokenize(input_string):
                     input_string[k].isalnum() or input_string[k] == "_"
                 ):
                     k += 1
-                current += _expand_variable(input_string[j:k])
+                current += expand_variable(input_string[j:k])
                 i = k
                 continue
 

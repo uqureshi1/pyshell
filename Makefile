@@ -4,7 +4,7 @@ setup:
 	uv sync
 
 run:
-	uv run --project . --quiet -m app.main $(ARGS)
+	uv run --project . --quiet pyshell
 
 lint:
 	uv run ruff check .
