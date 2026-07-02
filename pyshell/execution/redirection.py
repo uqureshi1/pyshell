@@ -1,6 +1,6 @@
 import sys
 
-from .constants import REDIRECTION_OPERATORS, StdoutTarget, StdStreams
+from pyshell.constants import REDIRECTION_OPERATORS, StdoutTarget, StdStreams
 
 
 def _redirection_indices(arguments):
@@ -73,6 +73,11 @@ def output_to_target(
         )
         if target == StdoutTarget.FILE:
             open(output_file, file_mode).close()
+
+
+def output_error_to_target(output, arguments):
+    """Write an error message, honoring `2>` redirection but defaulting to stderr."""
+    output_to_target(output, *get_output_mode(arguments), content_stream=StdStreams.STDERR)
 
 
 def has_redirection(arguments):

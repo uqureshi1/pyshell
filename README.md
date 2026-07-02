@@ -17,12 +17,6 @@ Creates a virtual environment and installs dependencies with `uv`.
 make run
 ```
 
-To pass arguments to the shell:
-
-```sh
-make run ARGS="-c 'echo hi'"
-```
-
 ## Project layout
 
-The entry point is [app/main.py](app/main.py).
+The entry point is [pyshell/main.py](pyshell/main.py).
